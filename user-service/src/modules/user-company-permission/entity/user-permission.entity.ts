@@ -1,5 +1,5 @@
 import { UserCompany } from "src/modules/user-company/entity/user-company.entity";
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Entity, ManyToOne, PrimaryColumn } from "typeorm";
 
 @Entity('user_company_permission')
 export class UserCompanyPermission {

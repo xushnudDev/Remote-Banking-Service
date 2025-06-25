@@ -1,6 +1,6 @@
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserService } from "./user.service";
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
 import { CreateUserDto, UpdateUserDto } from "./dtos";
 
 @ApiTags('User')
@@ -25,21 +25,21 @@ export class UserController {
     @Get(':id')
     @ApiOperation({ summary: 'Get a user by ID' })
     @ApiResponse({ status: 200, description: 'User fetched successfully' })
-    async getById(@Param('id') id: number) {
+    async getById(@Param('id',ParseIntPipe) id: number) {
         return await this.userService.findOne(id);
     };
 
     @Put(':id')
     @ApiOperation({ summary: 'Update a user by ID' })
     @ApiResponse({ status: 200, description: 'User updated successfully' })
-    async update(@Param('id') id: number, @Body() data: UpdateUserDto) {
+    async update(@Param('id',ParseIntPipe) id: number, @Body() data: UpdateUserDto) {
         return await this.userService.updateUser(id, data);
     };
 
     @Delete(':id')
     @ApiOperation({ summary: 'Delete a user by ID' })
     @ApiResponse({ status: 200, description: 'User deleted successfully' })
-    async delete(@Param('id') id: number) {
+    async delete(@Param('id',ParseIntPipe) id: number) {
         return await this.userService.deleteUser(id);
     };
     
