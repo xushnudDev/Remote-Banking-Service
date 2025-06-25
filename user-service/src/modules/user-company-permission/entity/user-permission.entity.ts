@@ -6,7 +6,7 @@ export class UserCompanyPermission {
     @PrimaryColumn()
     user_company_id: number;
 
-    @Column()
+    @PrimaryColumn()
     permission_id: number;
 
     @ManyToOne(() => UserCompany, (userCompany) => userCompany.permissions,{onDelete: 'CASCADE'})

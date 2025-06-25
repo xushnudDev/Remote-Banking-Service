@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitUserService1750843929775 implements MigrationInterface {
-    name = 'InitUserService1750843929775'
+export class InitUserService1750847681801 implements MigrationInterface {
+    name = 'InitUserService1750847681801'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "user_address" ("id" SERIAL NOT NULL, "region_id" integer NOT NULL, "district_id" integer NOT NULL, "address" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "user_id" integer, CONSTRAINT "REL_29d6df815a78e4c8291d3cf5e5" UNIQUE ("user_id"), CONSTRAINT "PK_302d96673413455481d5ff4022a" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "user_company_permission" ("user_company_id" integer NOT NULL, "permission_id" integer NOT NULL, "userCompanyId" integer, CONSTRAINT "PK_5b4a668f56a321730f2d858e322" PRIMARY KEY ("user_company_id"))`);
+        await queryRunner.query(`CREATE TABLE "user_company_permission" ("user_company_id" integer NOT NULL, "permission_id" integer NOT NULL, "userCompanyId" integer, CONSTRAINT "PK_659d6a93de4d23f355e111c590c" PRIMARY KEY ("user_company_id", "permission_id"))`);
         await queryRunner.query(`CREATE TABLE "user_company" ("id" SERIAL NOT NULL, "company_id" integer NOT NULL, "role_id" integer NOT NULL, "userId" integer, CONSTRAINT "PK_9e70b5f9d7095018e86970c7874" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TYPE "public"."user_contact_type_enum" AS ENUM('phone', 'email')`);
         await queryRunner.query(`CREATE TYPE "public"."user_contact_status_enum" AS ENUM('new', 'active')`);

@@ -1,7 +1,5 @@
 import {
-  ConflictException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company, CompanyAddress, CompanyStatus } from './entities';
@@ -62,11 +60,11 @@ export class CompanyService {
     tin: companyDto.tin,
     status: companyDto.status ?? CompanyStatus.ACTIVE,
   });
-  await this.companyRepository.save(company);
+  const savedCompany = await this.companyRepository.save(company);
 
   return {
     success: true,
-    data: company,
+    data: savedCompany,
     error: null,
   };
 }

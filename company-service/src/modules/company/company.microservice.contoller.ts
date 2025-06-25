@@ -1,9 +1,9 @@
 import { Controller } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { CreateCompanyWithAddressDto, UpdateAddressDto, UpdateCompanyDto } from './dtos';
+import { UpdateAddressDto, UpdateCompanyDto } from './dtos';
 
-@Controller('company')
+@Controller()
 export class CompanyMicroserviceController {
   constructor(private readonly companyService: CompanyService) {}
 
