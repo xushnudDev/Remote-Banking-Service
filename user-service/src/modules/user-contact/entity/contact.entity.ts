@@ -33,7 +33,7 @@ export class UserContact {
     })
     status: ContactStatus;
 
-    @ManyToOne(() => User, (user) => user.contacts,{onDelete: 'CASCADE'})
+    @ManyToOne(() => User, (user) => user.contacts,{onDelete: 'CASCADE',nullable: true})
     user: User;
 
     @Column({

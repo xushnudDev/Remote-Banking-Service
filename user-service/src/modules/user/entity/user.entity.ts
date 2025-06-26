@@ -41,14 +41,14 @@ export class User {
   })
   status: UserStatus;
 
-  @OneToOne(() => UserAddress, (address) => address.user, { cascade: true })
-  @JoinColumn()
+  @OneToOne(() => UserAddress, (address) => address.user, { onDelete: 'CASCADE',nullable: true })
+  @JoinColumn({ name: 'address_id' })
   address: UserAddress;
 
-  @OneToMany(() => UserContact, (contact) => contact.user, { cascade: true })
+  @OneToMany(() => UserContact, (contact) => contact.user, { onDelete: 'CASCADE', nullable: true })
   contacts: UserContact[];
 
-  @OneToMany(() => UserCompany, (company) => company.user, { cascade: true })
+  @OneToMany(() => UserCompany, (company) => company.user, { onDelete: 'CASCADE', nullable: true })
   companies: UserCompany[];
 
   @Column({

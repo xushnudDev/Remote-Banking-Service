@@ -50,7 +50,10 @@ export class UserCompanyService {
 
     async findAll(): Promise<BaseResponse<UserCompany[]>> {
         const userCompanies = await this.userCompanyRepository.find({
-            relations: ['user','permissions'],
+            relations: {
+                user: true,
+                permissions: true,
+            },
         });
         return {
             success: true,

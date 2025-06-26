@@ -32,6 +32,7 @@ export class UserService {
     const user = this.userRepository.create({
       firstname: userDto.firstname,
       lastname: userDto.lastname,
+      patronym: userDto.patronym,
       pin: userDto.pin,
       status: userDto.status ?? UserStatus.NEW,
     });

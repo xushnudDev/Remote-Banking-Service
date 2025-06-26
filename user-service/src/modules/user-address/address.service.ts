@@ -14,38 +14,46 @@ export class AddressService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(
-    addressDto: CreateAddressDto,
-  ): Promise<BaseResponse<UserAddress>> {
-    const user = await this.userRepository.findOne({
-      where: { id: addressDto.user_id },
-    });
+  async create(addressDto: CreateAddressDto): Promise<BaseResponse<UserAddress>> {
+  const user = await this.userRepository.findOne({
+    where: { id: addressDto.user_id },
+    relations: ['address'],
+  });
 
-    if (!user) {
-      return {
-        success: false,
-        data: null,
-        error: {
-          code: 404,
-          message: 'User not found',
-          cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
-        },
-      };
-    }
-    const address = this.addressRepository.create({
-      ...addressDto,
-      user,
-    });
-    const savedAddress = await this.addressRepository.save(address);
+  if (!user) {
     return {
-      success: true,
-      data: savedAddress,
-      error: null,
+      success: false,
+      data: null,
+      error: {
+        code: 404,
+        message: 'User not found',
+        cause: 'Entity not found',
+        fields: [
+          { name: 'user_id', message: 'Provided user ID not found in database' },
+        ],
+      },
     };
+  }
+
+  const address = this.addressRepository.create({
+    region_id: addressDto.region_id,
+    district_id: addressDto.district_id,
+    address: addressDto.address,
+    user,
+  });
+
+  const savedAddress = await this.addressRepository.save(address);
+
+  user.address = savedAddress;
+  await this.userRepository.save(user);
+
+  return {
+    success: true,
+    data: savedAddress,
+    error: null,
   };
+}
+
 
   async findAll(): Promise<BaseResponse<UserAddress[]>> {
     const addresses = await this.addressRepository.find({

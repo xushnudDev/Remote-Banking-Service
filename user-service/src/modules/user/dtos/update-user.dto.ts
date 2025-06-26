@@ -13,7 +13,7 @@ export class UpdateUserDto {
         message: 'First name must contain only letters and spaces',
     })
     @Length(3, 255, { message: 'First name must be between 3 and 255 characters' })
-    firstName: string;
+    firstname: string;
 
     @ApiProperty({
         description: 'User last name',
@@ -25,7 +25,7 @@ export class UpdateUserDto {
         message: 'Last name must contain only letters and spaces',
     })
     @Length(3, 255, { message: 'Last name must be between 3 and 255 characters' })
-    lastName: string;
+    lastname: string;
 
     @ApiProperty({
         description: "User patronym",
@@ -41,11 +41,11 @@ export class UpdateUserDto {
 
     @ApiProperty({
         description: "User pin",
-        example: "1234567891011121314"
+        example: "12345678901234"
     })
     @IsString()
     @IsNotEmpty()
-    @Length(14, 14, { message: 'PIN must be exactly 18 digits long' })
+    @Length(14, 14, { message: 'PIN must be exactly 14 digits long' })
     @Matches(/^\d+$/, { message: 'PIN must contain only digits' })
     pin: string;
 
