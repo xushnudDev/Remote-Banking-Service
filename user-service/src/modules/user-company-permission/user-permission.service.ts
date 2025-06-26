@@ -1,52 +1,95 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserCompanyPermission } from './entity';
+import { UserCompanyPermission } from './entity/user-permission.entity';
 import { Repository } from 'typeorm';
 import { CreateUserCompanyPermissionDto } from './dtos';
 import { BaseResponse } from 'src/common';
+import { UserCompany } from '../user-company/entity';
 
 @Injectable()
 export class UserPermissionService {
   constructor(
     @InjectRepository(UserCompanyPermission)
     private readonly userPermissionRepository: Repository<UserCompanyPermission>,
+    @InjectRepository(UserCompany)
+    private readonly userCompanyRepository: Repository<UserCompany>,
   ) {}
 
+  async getUserCompanyId(
+    userId: number,
+    companyId: number,
+  ): Promise<number | null> {
+    const userCompany = await this.userCompanyRepository.findOne({
+      where: {
+        user: { id: userId },
+        company_id: companyId,
+      },
+    });
+    return userCompany?.id || null;
+  }
+
   async createPermission(
+    userId: number,
+    companyId: number,
     dto: CreateUserCompanyPermissionDto,
   ): Promise<BaseResponse<UserCompanyPermission>> {
-    const permission = this.userPermissionRepository.create(dto);
-    if (!permission) {
+    const userCompanyId = await this.getUserCompanyId(userId, companyId);
+
+    if (!userCompanyId) {
       return {
         success: false,
         data: null,
         error: {
-          code: 500,
-          message: 'Internal server error',
-          cause: 'Failed to create permission',
-          fields: [],
+          code: 404,
+          message: 'UserCompany not found',
+          cause: 'Entity not found',
+          fields: [
+            { name: 'userId', message: 'User not linked with this company' },
+            { name: 'companyId', message: 'Company not found' },
+          ],
         },
       };
     }
-    const savedPermission =
-      await this.userPermissionRepository.save(permission);
-    return {
-      success: true,
-      data: savedPermission,
-      error: null,
-    };
+
+    const permission = this.userPermissionRepository.create({
+      user_company_id: userCompanyId,
+      permission_id: dto.permission_id,
+    });
+
+    const saved = await this.userPermissionRepository.save(permission);
+    return { success: true, data: saved, error: null };
   }
 
   async deletePermission(
-    user_company_id: number,
-    permission_id: number,
+    userId: number,
+    companyId: number,
+    permissionId: number,
   ): Promise<BaseResponse<null>> {
+    const userCompanyId = await this.getUserCompanyId(userId, companyId);
+
+    if (!userCompanyId) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: 404,
+          message: 'UserCompany not found',
+          cause: 'Entity not found',
+          fields: [
+            { name: 'userId', message: 'User not linked with this company' },
+            { name: 'companyId', message: 'Company not found' },
+          ],
+        },
+      };
+    }
+
     const permission = await this.userPermissionRepository.findOne({
       where: {
-        user_company_id,
-        permission_id,
+        user_company_id: userCompanyId,
+        permission_id: permissionId,
       },
     });
+
     if (!permission) {
       return {
         success: false,
@@ -56,17 +99,16 @@ export class UserPermissionService {
           message: 'Permission not found',
           cause: 'Entity not found',
           fields: [
-            { name: 'user_company_id', message: 'Provided ID not found in database' },
-            { name: 'permission_id', message: 'Provided ID not found in database' },
+            {
+              name: 'permission_id',
+              message: 'Permission not found for user_company',
+            },
           ],
         },
       };
     }
-    await this.userPermissionRepository.delete(permission);
-    return {
-      success: true,
-      data: null,
-      error: null,
-    };
+
+    await this.userPermissionRepository.delete(permission.permission_id);
+    return { success: true, data: null, error: null };
   }
 }

@@ -4,7 +4,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from "@
 import { CreateUserDto, UpdateUserDto } from "./dtos";
 
 @ApiTags('User')
-@Controller('user')
+@Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 

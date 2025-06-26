@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserAddress } from './entity';
 import { Repository } from 'typeorm';
 import { User } from '../user/entity';
-import { CreateAddressDto } from './dtos';
+import { CreateAddressDto, UpdateAddressDto } from './dtos';
 import { BaseResponse } from 'src/common';
 
 @Injectable()
@@ -14,50 +14,54 @@ export class AddressService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(addressDto: CreateAddressDto): Promise<BaseResponse<UserAddress>> {
-  const user = await this.userRepository.findOne({
-    where: { id: addressDto.user_id },
-    relations: ['address'],
-  });
+  async create(
+    userId: number,
+    addressDto: CreateAddressDto,
+  ): Promise<BaseResponse<UserAddress>> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['address'],
+    });
 
-  if (!user) {
+    if (!user) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: 404,
+          message: 'User not found',
+          cause: 'Entity not found',
+          fields: [
+            {
+              name: 'user_id',
+              message: 'Provided user ID not found in database',
+            },
+          ],
+        },
+      };
+    }
+
+    const address = this.addressRepository.create({
+      region_id: addressDto.region_id,
+      district_id: addressDto.district_id,
+      address: addressDto.address,
+    });
+
+    const savedAddress = await this.addressRepository.save(address);
+
+    user.address = savedAddress;
+    await this.userRepository.save(user);
+
     return {
-      success: false,
-      data: null,
-      error: {
-        code: 404,
-        message: 'User not found',
-        cause: 'Entity not found',
-        fields: [
-          { name: 'user_id', message: 'Provided user ID not found in database' },
-        ],
-      },
+      success: true,
+      data: savedAddress,
+      error: null,
     };
   }
 
-  const address = this.addressRepository.create({
-    region_id: addressDto.region_id,
-    district_id: addressDto.district_id,
-    address: addressDto.address,
-    user,
-  });
-
-  const savedAddress = await this.addressRepository.save(address);
-
-  user.address = savedAddress;
-  await this.userRepository.save(user);
-
-  return {
-    success: true,
-    data: savedAddress,
-    error: null,
-  };
-}
-
-
   async findAll(): Promise<BaseResponse<UserAddress[]>> {
     const addresses = await this.addressRepository.find({
-        relations: ['user']
+      relations: ['user'],
     });
     if (!addresses) {
       return {
@@ -76,84 +80,95 @@ export class AddressService {
       data: addresses,
       error: null,
     };
-  };
+  }
 
-  async findOne(id: number): Promise<BaseResponse<UserAddress>> {
-    const address = await this.addressRepository.findOne({
-      where: { id },
-      relations: ['user']
+  async findOne(userId: number): Promise<BaseResponse<UserAddress>> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['address'],
     });
-    if (!address) {
+
+    if (!user || !user.address) {
       return {
         success: false,
         data: null,
         error: {
           code: 404,
-          message: 'Address not found',
+          message: 'User or address not found',
           cause: 'Entity not found',
           fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
+            { name: 'userId', message: 'Address not found for this user' },
           ],
         },
       };
     }
+
     return {
       success: true,
-      data: address,
+      data: user.address,
       error: null,
     };
-  };
+  }
 
-  async updateUserAddress(id: number, addressDto: CreateAddressDto): Promise<BaseResponse<UserAddress>> {
-    const address = await this.addressRepository.findOne({
-      where: { id },
-      relations: ['user']
+  async updateUserAddress(
+    userId: number,
+    addressDto: UpdateAddressDto,
+  ): Promise<BaseResponse<UserAddress>> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['address'],
     });
-    if (!address) {
+
+    if (!user || !user.address) {
       return {
         success: false,
         data: null,
         error: {
           code: 404,
-          message: 'Address not found',
+          message: 'User or address not found',
           cause: 'Entity not found',
           fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
+            { name: 'userId', message: 'Address not found for this user' },
           ],
         },
       };
     }
-    const updatedAddress = await this.addressRepository.save({
-      ...address,
+
+    const updated = await this.addressRepository.save({
+      ...user.address,
       ...addressDto,
     });
+
     return {
       success: true,
-      data: updatedAddress,
+      data: updated,
       error: null,
     };
-  };
+  }
 
-  async deleteUserAddress(id: number): Promise<BaseResponse<null>> {
-    const address = await this.addressRepository.findOne({
-      where: { id },
-      relations: ['user']
+  async deleteUserAddress(userId: number): Promise<BaseResponse<null>> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['address'],
     });
-    if (!address) {
+
+    if (!user || !user.address) {
       return {
         success: false,
         data: null,
         error: {
           code: 404,
-          message: 'Address not found',
+          message: 'Address not found for user',
           cause: 'Entity not found',
           fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
+            { name: 'userId', message: 'No address found for this user' },
           ],
         },
       };
     }
-    await this.addressRepository.delete(id);
+
+    await this.addressRepository.delete(user.address.id);
+
     return {
       success: true,
       data: null,

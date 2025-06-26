@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 
-export class CreateUserCompanyDto {
+export class UpdateUserCompanyDto {
   @ApiProperty({ example: 12, description: 'Company ID' })
   @IsNumber()
   company_id: number;

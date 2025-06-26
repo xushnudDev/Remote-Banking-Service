@@ -26,11 +26,4 @@ export class CreateAddressDto {
   @Length(2, 255, { message: 'Address must be between 2 and 255 characters' })
   address: string;
 
-  @ApiProperty({
-    example: 2,
-    description: 'User ID',
-  })
-  @IsNumber()
-  @IsPositive({ message: 'User ID must be a positive integer' })
-  user_id: number;
 }

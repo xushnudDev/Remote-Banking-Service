@@ -8,8 +8,8 @@ export class UserAddressController {
   constructor(private readonly addressService: AddressService) {}
 
   @MessagePattern('create_user_address')
-  create(@Payload() dto: CreateAddressDto) {
-    return this.addressService.create(dto);
+  create(@Payload() userId: number,dto: CreateAddressDto) {
+    return this.addressService.create(userId,dto);
   }
 
   @MessagePattern('get_all_user_addresses')
