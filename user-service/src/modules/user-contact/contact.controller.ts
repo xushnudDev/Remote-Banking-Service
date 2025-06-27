@@ -7,76 +7,58 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
-import { CreateContactDto } from './dtos';
+import { CreateContactDto, UpdateContactDto } from './dtos';
 
 @ApiTags('Contact')
-@Controller('contact')
+@Controller('users/:userId/contacts')
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
   @Post()
-  @ApiProperty({
-    description: 'Create new contact',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Contact created',
-  })
-  async createContact(@Body() contactDto: CreateContactDto) {
-    return await this.contactService.createContact(contactDto);
+  @ApiProperty({ description: 'Create new contact' })
+  @ApiResponse({ status: 201, description: 'Contact created' })
+  async createContact(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() contactDto: CreateContactDto,
+  ) {
+    return await this.contactService.createContact(userId, contactDto);
   }
 
   @Get()
-  @ApiProperty({
-    description: 'Get all contacts',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Contacts found',
-  })
-  async getContacts() {
-    return await this.contactService.findAll();
+  @ApiProperty({ description: 'Get contact by userId' })
+  @ApiResponse({ status: 200, description: 'Contact found' })
+  async getContactByUserId(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.contactService.findOne(userId);
   }
 
-  @Get(':id')
-  @ApiProperty({
-    description: 'Get contact by id',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Contact found',
-  })
-  async getContactById(@Param('id', ParseIntPipe) id: number) {
-    return await this.contactService.findOne(id);
-  }
-
-  @Put(':id')
-  @ApiProperty({
-    description: 'Update contact by id',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Contact updated',
-  })
+  @Put()
+  @ApiProperty({ description: 'Update contact by userId' })
+  @ApiResponse({ status: 200, description: 'Contact updated' })
   async updateContact(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateDto: CreateContactDto,
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() updateDto: UpdateContactDto,
   ) {
-    return await this.contactService.update(id, updateDto);
+    return await this.contactService.update(userId, updateDto);
   }
 
-  @Delete(':id')
-  @ApiProperty({
-    description: 'Delete contact by id',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Contact deleted',
-  })
-  async deleteContact(@Param('id', ParseIntPipe) id: number) {
-    return await this.contactService.deleteContact(id);
+  @Patch()
+  @ApiProperty({ description: 'Update contact by userId' })
+  @ApiResponse({ status: 200, description: 'Contact updated' })
+  async updateContactByUserId(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() updateDto: UpdateContactDto,
+  ) {
+    return await this.contactService.update(userId, updateDto);
+  }
+
+  @Delete()
+  @ApiProperty({ description: 'Delete contact by userId' })
+  @ApiResponse({ status: 200, description: 'Contact deleted' })
+  async deleteContact(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.contactService.deleteContact(userId);
   }
 }

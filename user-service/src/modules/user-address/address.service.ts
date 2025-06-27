@@ -31,12 +31,6 @@ export class AddressService {
           code: 404,
           message: 'User not found',
           cause: 'Entity not found',
-          fields: [
-            {
-              name: 'user_id',
-              message: 'Provided user ID not found in database',
-            },
-          ],
         },
       };
     }
@@ -71,7 +65,6 @@ export class AddressService {
           code: 404,
           message: 'Addresses not found',
           cause: 'Entity not found',
-          fields: [],
         },
       };
     }
@@ -96,9 +89,6 @@ export class AddressService {
           code: 404,
           message: 'User or address not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'userId', message: 'Address not found for this user' },
-          ],
         },
       };
     }
@@ -127,9 +117,6 @@ export class AddressService {
           code: 404,
           message: 'User or address not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'userId', message: 'Address not found for this user' },
-          ],
         },
       };
     }
@@ -160,9 +147,6 @@ export class AddressService {
           code: 404,
           message: 'Address not found for user',
           cause: 'Entity not found',
-          fields: [
-            { name: 'userId', message: 'No address found for this user' },
-          ],
         },
       };
     }

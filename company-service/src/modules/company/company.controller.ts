@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -63,6 +64,19 @@ export class CompanyController {
     return await this.companyService.updateCompany(id, data);
   }
 
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update company status' })
+  @ApiResponse({
+    status: 200,
+    description: 'Company status updated successfully',
+  })
+  async updateCompanyStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: UpdateCompanyDto,
+  ) {
+    return await this.companyService.updateCompany(id, data);
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete one company' })
   @ApiResponse({ status: 200, description: 'Company deleted successfully' })
@@ -94,6 +108,16 @@ export class CompanyController {
   @ApiOperation({ summary: 'Update address by companyId' })
   @ApiResponse({ status: 200, description: 'Address updated successfully' })
   async updateAddress(
+    @Param('companyId', ParseIntPipe) companyId: number,
+    @Body() data: UpdateAddressDto,
+  ) {
+    return await this.companyService.updateAddress(companyId, data);
+  }
+
+  @Patch('/:companyId/address')
+  @ApiOperation({ summary: 'Update address status' })
+  @ApiResponse({ status: 200, description: 'Address updated successfully' })
+  async updateAddressStatus(
     @Param('companyId', ParseIntPipe) companyId: number,
     @Body() data: UpdateAddressDto,
   ) {

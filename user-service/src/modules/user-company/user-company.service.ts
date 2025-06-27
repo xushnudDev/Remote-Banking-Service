@@ -28,7 +28,6 @@ export class UserCompanyService {
           code: 404,
           message: 'User not found',
           cause: 'Entity not found',
-          fields: [{ name: 'userId', message: 'User not found in DB' }],
         },
       };
     }
@@ -56,6 +55,18 @@ export class UserCompanyService {
       relations: ['permissions'],
     });
 
+    if (!data) {
+      return {
+        success: false,
+        data: null,
+        error: {
+          code: 404,
+          message: 'UserCompany not found',
+          cause: 'Entity not found',
+        },
+      };
+    }
+
     return { success: true, data, error: null };
   }
 
@@ -75,7 +86,6 @@ export class UserCompanyService {
           code: 404,
           message: 'UserCompany not found',
           cause: 'Entity not found',
-          fields: [{ name: 'id', message: 'UserCompany ID not found' }],
         },
       };
     }
@@ -101,7 +111,6 @@ export class UserCompanyService {
           code: 404,
           message: 'UserCompany not found',
           cause: 'Entity not found',
-          fields: [{ name: 'id', message: 'UserCompany ID not found' }],
         },
       };
     }

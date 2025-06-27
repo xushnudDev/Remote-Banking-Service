@@ -15,11 +15,12 @@ export class ContactService {
   ) {}
 
   async createContact(
+    userId: number,
     contactDto: CreateContactDto,
   ): Promise<BaseResponse<UserContact>> {
     const user = await this.userRepository.findOne({
       where: {
-        id: contactDto.user_id,
+        id: userId,
       },
     });
     if (!user) {
@@ -30,9 +31,6 @@ export class ContactService {
           code: 404,
           message: 'User not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
         },
       };
     }
@@ -58,95 +56,102 @@ export class ContactService {
       error: null,
     };
   }
+async findOne(userId: number): Promise<BaseResponse<UserContact>> {
+  const contact = await this.contactRepository.findOne({
+    where: {
+      user: { id: userId },
+    },
+    relations: ['user'],
+  });
 
-  async findOne(id: number): Promise<BaseResponse<UserContact>> {
-    const contact = await this.contactRepository.findOne({
-      where: {
-        id,
-      },
-      relations: ['user'],
-    });
-    if (!contact) {
-      return {
-        success: false,
-        data: null,
-        error: {
-          code: 404,
-          message: 'Contact not found',
-          cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
-        },
-      };
-    }
+  if (!contact) {
     return {
-      success: true,
-      data: contact,
-      error: null,
+      success: false,
+      data: null,
+      error: {
+        code: 404,
+        message: 'Contact not found',
+        cause: 'Entity not found',
+      },
     };
   }
+
+  return {
+    success: true,
+    data: contact,
+    error: null,
+  };
+}
 
   async update(
-    id: number,
-    updateDto: UpdateContactDto,
-  ): Promise<BaseResponse<UserContact>> {
-    const contact = await this.contactRepository.findOne({
-      where: {
-        id,
-      },
-      relations: ['user'],
-    });
-    if (!contact) {
-      return {
-        success: false,
-        data: null,
-        error: {
-          code: 404,
-          message: 'Contact not found',
-          cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
-        },
-      };
-    }
-    contact.type = updateDto.type;
-    contact.status = updateDto.status;
-    const savedContact = await this.contactRepository.save(contact);
-    return {
-      success: true,
-      data: savedContact,
-      error: null,
-    };
-  };
+  userId: number,
+  updateDto: UpdateContactDto,
+): Promise<BaseResponse<UserContact>> {
+  const contact = await this.contactRepository.findOne({
+    where: {
+      user: { id: userId },
+    },
+    relations: ['user'],
+  });
 
-  async deleteContact(id: number): Promise<BaseResponse<null>> {
-    const contact = await this.contactRepository.findOne({
-      where: {
-        id,
-      },
-      relations: ['user'],
-    });
-    if (!contact) {
-      return {
-        success: false,
-        data: null,
-        error: {
-          code: 404,
-          message: 'Contact not found',
-          cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
-        },
-      };
-    }
-    await this.contactRepository.delete(id);
+  if (!contact) {
     return {
-      success: true,
+      success: false,
       data: null,
-      error: null,
+      error: {
+        code: 404,
+        message: 'Contact not found',
+        cause: 'Entity not found',
+        fields: [
+          { name: 'userId', message: 'Contact not found for this user' },
+        ],
+      },
     };
   }
+
+  contact.type = updateDto.type;
+  contact.status = updateDto.status;
+
+  const savedContact = await this.contactRepository.save(contact);
+
+  return {
+    success: true,
+    data: savedContact,
+    error: null,
+  };
+}
+
+
+  async deleteContact(userId: number): Promise<BaseResponse<null>> {
+  const contact = await this.contactRepository.findOne({
+    where: {
+      user: { id: userId },
+    },
+    relations: ['user'],
+  });
+
+  if (!contact) {
+    return {
+      success: false,
+      data: null,
+      error: {
+        code: 404,
+        message: 'Contact not found',
+        cause: 'Entity not found',
+        fields: [
+          { name: 'userId', message: 'Contact not found for this user' },
+        ],
+      },
+    };
+  }
+
+  await this.contactRepository.delete(contact.id);
+
+  return {
+    success: true,
+    data: null,
+    error: null,
+  };
+}
+
 }

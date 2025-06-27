@@ -43,10 +43,6 @@ export class UserPermissionService {
           code: 404,
           message: 'UserCompany not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'userId', message: 'User not linked with this company' },
-            { name: 'companyId', message: 'Company not found' },
-          ],
         },
       };
     }
@@ -75,10 +71,6 @@ export class UserPermissionService {
           code: 404,
           message: 'UserCompany not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'userId', message: 'User not linked with this company' },
-            { name: 'companyId', message: 'Company not found' },
-          ],
         },
       };
     }
@@ -98,12 +90,6 @@ export class UserPermissionService {
           code: 404,
           message: 'Permission not found',
           cause: 'Entity not found',
-          fields: [
-            {
-              name: 'permission_id',
-              message: 'Permission not found for user_company',
-            },
-          ],
         },
       };
     }

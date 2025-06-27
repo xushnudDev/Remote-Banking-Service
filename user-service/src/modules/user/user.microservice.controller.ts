@@ -13,8 +13,8 @@ export class UserMicroserviceController {
     };
 
     @MessagePattern('get_all_users')
-    async getAllUsers() {
-        return this.userService.findAll();
+    async getAllUsers(@Param() page: number = 1, @Param() size: number = 10) {
+        return this.userService.findAll(page, size);
     };
 
     @MessagePattern('get_user')

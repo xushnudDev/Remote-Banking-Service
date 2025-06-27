@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User, UserStatus } from './entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dtos';
-import { BaseResponse } from 'src/common';
+import { BaseResponse, PageableResponse } from 'src/common';
 @Injectable()
 export class UserService {
   constructor(
@@ -23,9 +23,6 @@ export class UserService {
           code: 409,
           message: 'User already exists',
           cause: 'user already exists in database',
-          fields: [
-            { name: 'pin', message: 'User with provided PIN already exists' },
-          ],
         },
       };
     }
@@ -34,7 +31,7 @@ export class UserService {
       lastname: userDto.lastname,
       patronym: userDto.patronym,
       pin: userDto.pin,
-      status: userDto.status ?? UserStatus.NEW,
+      status: UserStatus.NEW,
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -45,36 +42,28 @@ export class UserService {
     };
   }
 
-  async findAll(): Promise<BaseResponse<User[]>> {
-    const users = await this.userRepository.find({
-      relations: ['address', 'contacts', 'companies'],
+  async findAll(
+    page: number = 1,
+    size: number = 10,
+  ): Promise<PageableResponse<User[]>> {
+    const [users, total] = await this.userRepository.findAndCount({
+      skip: (page - 1) * size,
+      take: size,
     });
 
-    if (!users) {
-      return {
-        success: false,
-        data: null,
-        error: {
-          code: 404,
-          message: 'Users not found',
-          cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
-        },
-      };
-    }
     return {
       success: true,
       data: users,
       error: null,
+      totalElements: total,
+      page,
+      size,
     };
   }
 
   async findOne(id: number): Promise<BaseResponse<User>> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['address', 'contacts', 'companies'],
     });
     if (!user) {
       return {
@@ -84,9 +73,6 @@ export class UserService {
           code: 404,
           message: 'User not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
         },
       };
     }
@@ -95,9 +81,12 @@ export class UserService {
       data: user,
       error: null,
     };
-  };
+  }
 
-  async updateUser(id: number, updateDto: UpdateUserDto): Promise<BaseResponse<User>> {
+  async updateUser(
+    id: number,
+    updateDto: UpdateUserDto,
+  ): Promise<BaseResponse<User>> {
     const result = await this.userRepository.update(id, updateDto);
     if (result.affected === 0) {
       return {
@@ -107,22 +96,18 @@ export class UserService {
           code: 404,
           message: 'User not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
         },
       };
     }
     const updated = await this.userRepository.findOne({
       where: { id },
-      relations: ['address', 'contacts', 'companies'],
     });
     return {
       success: true,
       data: updated,
       error: null,
     };
-  };
+  }
 
   async deleteUser(id: number): Promise<BaseResponse<null>> {
     const result = await this.userRepository.delete(id);
@@ -134,9 +119,6 @@ export class UserService {
           code: 404,
           message: 'User not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
         },
       };
     }

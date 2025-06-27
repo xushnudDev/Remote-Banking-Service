@@ -14,4 +14,10 @@ export class BaseResponse<T = any> {
     success: boolean;
     data: T | null;
     error?: ErrorResponse | null;
+};
+
+export class PageableResponse<T = any> extends BaseResponse<T> {
+    totalElements: number;
+    page: number;
+    size: number;
 }

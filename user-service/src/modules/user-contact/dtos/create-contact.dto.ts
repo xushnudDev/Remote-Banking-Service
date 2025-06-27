@@ -17,10 +17,4 @@ export class CreateContactDto {
     })
     @IsEnum(ContactStatus,{message: 'Invalid contact status'})
     status: ContactStatus;
-
-    @ApiProperty({
-        example: '1',
-        description: 'User ID',
-    })
-    user_id: number
 }

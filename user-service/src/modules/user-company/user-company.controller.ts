@@ -1,6 +1,6 @@
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserCompanyService } from './user-company.service';
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { CreateUserCompanyDto, UpdateUserCompanyDto } from './dtos';
 
 @ApiTags('User Company')
@@ -33,7 +33,16 @@ export class UserCompanyController {
     @Body() dto: UpdateUserCompanyDto,
   ) {
     return await this.userCompanyService.update(companyId, dto);
-  }
+  };
+
+  @Patch(':companyId')
+  @ApiOperation({ summary: 'Update user company' })
+  @ApiResponse({ status: 200, description: 'User company updated' })
+  async updateUserCompany(
+    @Param('companyId', ParseIntPipe) companyId: number,
+    @Body() dto: UpdateUserCompanyDto,) {
+      return await this.userCompanyService.update(companyId, dto);
+    }
 
   @Delete(':companyId')
   @ApiOperation({ summary: 'Delete user company by ID' })

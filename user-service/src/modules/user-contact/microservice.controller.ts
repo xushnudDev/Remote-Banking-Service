@@ -8,8 +8,8 @@ export class UserContactController {
   constructor(private readonly contactService: ContactService) {}
 
   @MessagePattern('create_user_contact')
-  create(@Payload() dto: CreateContactDto) {
-    return this.contactService.createContact(dto);
+  create(@Payload() dto: CreateContactDto,@Payload() userId: number) {
+    return this.contactService.createContact(userId,dto);
   }
 
   @MessagePattern('get_all_user_contacts')
@@ -18,17 +18,17 @@ export class UserContactController {
   }
 
   @MessagePattern('get_user_contact_by_id')
-  findOne(@Payload() id: number) {
-    return this.contactService.findOne(id);
+  findOne(@Payload() userId: number) {
+    return this.contactService.findOne(userId);
   }
 
   @MessagePattern('update_user_contact')
-  update(@Payload() payload: { id: number; data: UpdateContactDto }) {
-    return this.contactService.update(payload.id, payload.data);
+  update(@Payload() payload: { userId: number; data: UpdateContactDto }) {
+    return this.contactService.update(payload.userId, payload.data);
   }
 
   @MessagePattern('delete_user_contact')
-  remove(@Payload() id: number) {
-    return this.contactService.deleteContact(id);
+  remove(@Payload() userId: number) {
+    return this.contactService.deleteContact(userId);
   }
 }

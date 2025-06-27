@@ -57,13 +57,4 @@ export class CreateUserDto {
   @Length(14, 14, { message: 'PIN must be exactly 14 digits long' }) // ✅
   @Matches(/^\d+$/, { message: 'PIN must contain only digits' })
   pin: string;
-
-  @ApiProperty({
-    description: 'User status',
-    example: 'new',
-    required: false,
-  })
-  @IsEnum(UserStatus)
-  @IsOptional()
-  status?: UserStatus = UserStatus.NEW;
 }

@@ -1,5 +1,5 @@
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { AddressService } from "./address.service";
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AddressService } from './address.service';
 import {
   Body,
   Controller,
@@ -7,10 +7,11 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
-} from "@nestjs/common";
-import { CreateAddressDto, UpdateAddressDto } from "./dtos";
+} from '@nestjs/common';
+import { CreateAddressDto, UpdateAddressDto } from './dtos';
 
 @ApiTags('User Address')
 @Controller('users/:userId/address')
@@ -38,6 +39,16 @@ export class AddressController {
   @ApiOperation({ summary: 'Update address by user ID' })
   @ApiResponse({ status: 200, description: 'Address updated successfully' })
   async update(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Body() data: UpdateAddressDto,
+  ) {
+    return await this.addressService.updateUserAddress(userId, data);
+  }
+
+  @Patch()
+  @ApiOperation({ summary: 'Update address by user ID' })
+  @ApiResponse({ status: 200, description: 'Address updated successfully' })
+  async updateAddress(
     @Param('userId', ParseIntPipe) userId: number,
     @Body() data: UpdateAddressDto,
   ) {
