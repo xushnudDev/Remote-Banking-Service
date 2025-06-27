@@ -101,9 +101,7 @@ export class CompanyService {
           code: 404,
           message: 'Company not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
+          
         },
       };
     }
@@ -127,9 +125,7 @@ export class CompanyService {
           code: 404,
           message: 'Company not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
+          
         },
       };
     }
@@ -156,9 +152,7 @@ export class CompanyService {
           code: 404,
           message: 'Company not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
+          
         },
       };
     }
@@ -183,7 +177,6 @@ export class CompanyService {
           code: 409,
           message: 'Address already exists',
           cause: 'Address already exists',
-          fields: [{ name: 'companyId', message: 'Address already exists' }],
         },
       };
     }
@@ -212,9 +205,7 @@ export class CompanyService {
           code: 404,
           message: 'Addresses not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
+          
         },
       };
     }
@@ -239,9 +230,7 @@ export class CompanyService {
           code: 404,
           message: 'Address not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
+          
         },
       };
     }
@@ -265,9 +254,7 @@ export class CompanyService {
           code: 404,
           message: 'Address not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
+          
         },
       };
     }
@@ -292,9 +279,7 @@ export class CompanyService {
           code: 404,
           message: 'Address not found',
           cause: 'Entity not found',
-          fields: [
-            { name: 'id', message: 'Provided ID not found in database' },
-          ],
+          
         },
       };
     }
